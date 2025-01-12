@@ -7,6 +7,7 @@ if (! function_exists('get_data_products')) {
         $date2 = date('dmyCH');
         $password = md5("bisacoding-$date");
         $field = "username=tesprogrammer{$date2}&password=$password";
+        // var_dump($field);die;
         $header = [
             'accept' => 'application/json'
         ];
@@ -33,6 +34,7 @@ if (! function_exists('get_data')) {
             $ci->load->model('product_model');
 
             $products = get_data_products();
+
             $productsToInsert = [];
             $kategoriesToInsert = [];
             $kategories = [];
@@ -82,7 +84,7 @@ if (! function_exists('get_data')) {
 
             $ci->db->trans_commit();
 
-            return $ci->product_model->get_data();
+            return $ci->product_model->get_all_data();
         } catch (Exception $e) {
 
             $ci->db->trans_rollback();
