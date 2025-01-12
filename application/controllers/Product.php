@@ -27,13 +27,16 @@ class Product extends CI_Controller
 
 	public function index()
 	{
-
+		$where = [
+			'nama_status'=>'bisa dijual'
+		];
 		// cek apakah produk kosong atau tidak
-		$products = $this->product_model->get_all_data();
-
-		if (count($products) == 0) {
+		
+		if ($this->db->get('produk')->num_rows() == 0) {
 			// function dari helper
 			$products = get_data();
+		}else{
+			$products = $this->product_model->get_all_data($where);
 		}
 
 		$data = ['products' => $products];
@@ -48,7 +51,6 @@ class Product extends CI_Controller
 		$this->form_validation->set_rules('produk_harga', 'Product Price', 'required|min_length[3]|numeric');
 
 		if ($this->form_validation->run()) {
-			// var_dump($this->product_model);die;
 			$this->product_model->update_product($id_product, [
 				'nama_produk' => $this->input->post('produk_nama'),
 				'harga' => $this->input->post('produk_harga'),
@@ -56,12 +58,11 @@ class Product extends CI_Controller
 				'status_id' => $this->input->post('produk_status'),
 			]);
 			$this->session->set_flashdata('message', 'Product Updated');
-			// redirect('/');
+			redirect(base_url());
 		} else {
 			$product = $this->product_model->get_data($id_product);
 			$kategories = $this->db->get('kategori')->result_array();
 			$status = $this->db->get('status')->result_array();
-			// var_dump($status);die;
 			$data = [
 				'product' => $product,
 				'kategories' => $kategories,
@@ -69,5 +70,41 @@ class Product extends CI_Controller
 			];
 			$this->load->view('edit_product_page', $data);
 		}
+	}
+
+	public function add()
+	{
+		$this->load->library('form_validation');
+
+		$this->form_validation->set_rules('produk_nama', 'Product Name', 'required');
+		$this->form_validation->set_rules('produk_harga', 'Product Price', 'required|min_length[3]|numeric');
+
+		if ($this->form_validation->run()) {
+			$this->product_model->insert_product([
+				'nama_produk' => $this->input->post('produk_nama'),
+				'harga' => $this->input->post('produk_harga'),
+				'kategori_id' => $this->input->post('produk_kategori'),
+				'status_id' => $this->input->post('produk_status'),
+			]);
+			$this->session->set_flashdata('message', 'Product inserted');
+			redirect(base_url());
+		} else {
+			$kategories = $this->db->get('kategori')->result_array();
+			$status = $this->db->get('status')->result_array();
+			$data = [
+				'kategories' => $kategories,
+				'status' => $status
+			];
+			$this->load->view('add_product_page', $data);
+		}
+	}
+
+	public function delete($id_product)
+	{
+		if ($this->input->post()) {
+			$this->product_model->delete_product($id_product);
+			$this->session->set_flashdata('message', 'Product Deleted');
+		}
+		redirect(base_url());
 	}
 }

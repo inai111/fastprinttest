@@ -1,5 +1,6 @@
 <?php
 date_default_timezone_set('Asia/Singapore');
+
 if (! function_exists('get_data_products')) {
     function get_data_products()
     {
@@ -84,12 +85,14 @@ if (! function_exists('get_data')) {
 
             $ci->db->trans_commit();
 
-            return $ci->product_model->get_all_data();
+            $where = [
+                'nama_status' => 'bisa dijual'
+            ];
+            return $ci->product_model->get_all_data($where);
         } catch (Exception $e) {
 
             $ci->db->trans_rollback();
-            var_dump($e);
-            die;
+            return $e;
         }
     }
 }
