@@ -20,7 +20,7 @@ if (! function_exists('get_data_products')) {
         curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
         $response = curl_exec($curl);
         curl_close($curl);
-        return json_decode($response, 1);
+        return json_decode($response,true);
     }
 }
 
@@ -85,10 +85,7 @@ if (! function_exists('get_data')) {
 
             $ci->db->trans_commit();
 
-            $where = [
-                'nama_status' => 'bisa dijual'
-            ];
-            return $ci->product_model->get_all_data($where);
+            return $ci->db->get('produk')->num_rows();
         } catch (Exception $e) {
 
             $ci->db->trans_rollback();

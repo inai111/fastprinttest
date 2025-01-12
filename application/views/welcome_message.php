@@ -9,7 +9,17 @@ $this->load->view('layouts/header');
 				<?= $this->session->flashdata('message') ?>
 			</div>
 		<?php endif; ?>
-		<a href="<?= base_url('/product/add') ?>" class="btn btn-primary px-4 mb-2">Tambah</a>
+		<div class="d-flex gap-2 align-items-center mb-1">
+			<a href="<?= base_url('/product/add') ?>" class="btn btn-primary px-4">Tambah</a>
+			<form class="w-100">
+				<select name="status" id="status" class="form-select" aria-label="Default select example">
+					<option selected>All Status</option>
+					<?php foreach ($statuses as $status): ?>
+						<option value="<?= $status ?>" <?= $this->input->get('status') == $status ? 'selected' : '' ?>><?= $status ?></option>
+					<?php endforeach ?>
+				</select>
+			</form>
+		</div>
 		<table class="table table-hover table-stripped">
 			<thead>
 				<tr>
@@ -24,7 +34,7 @@ $this->load->view('layouts/header');
 				<?php foreach ($products as $product) : ?>
 					<tr>
 						<td><?= $product['nama_produk'] ?></td>
-						<td>Rp.<?= number_format($product['harga'],0,'.','.')?></td>
+						<td>Rp.<?= number_format($product['harga'], 0, '.', '.') ?></td>
 						<td><?= $product['nama_kategori'] ?></td>
 						<td><?= $product['nama_status'] ?></td>
 						<td>
@@ -45,6 +55,11 @@ $this->load->view('layouts/header');
 			</tbody>
 		</table>
 	</div>
+	<script>
+		document.querySelector('select#status').addEventListener('change', function() {
+			this.closest('form').submit();
+		});
+	</script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 

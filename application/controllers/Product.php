@@ -27,19 +27,25 @@ class Product extends CI_Controller
 
 	public function index()
 	{
-		$where = [
-			'nama_status'=>'bisa dijual'
-		];
 		// cek apakah produk kosong atau tidak
-		
 		if ($this->db->get('produk')->num_rows() == 0) {
 			// function dari helper
 			$products = get_data();
-		}else{
-			$products = $this->product_model->get_all_data($where);
 		}
 
-		$data = ['products' => $products];
+		$statuses = $this->db->get('status')->result_array();
+		$statuses = array_column($statuses, 'nama_status');
+
+		$where = [];
+		if ($this->input->get('status') && in_array($this->input->get('status'), $statuses)) {
+			$where = [
+				'nama_status' => $this->input->get('status')
+			];
+		}
+
+		$products = $this->product_model->get_all_data($where);
+
+		$data = ['products' => $products, 'statuses' => $statuses];
 		$this->load->view('welcome_message', $data);
 	}
 
